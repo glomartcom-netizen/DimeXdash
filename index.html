@@ -1,42 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>DimeX</title>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+
+<style>
+body{
+background:#000;
+color:#fff;
+font-family:Arial;
+text-align:center;
+}
+header{
+padding:20px;
+font-size:28px;
+color:gold;
+}
+button{
+padding:16px 30px;
+background:gold;
+border:none;
+font-size:18px;
+border-radius:10px;
+margin:10px;
+}
+.card{
+background:#111;
+margin:20px auto;
+padding:20px;
+border-radius:12px;
+max-width:400px;
+}
+</style>
+</head>
+
+<body>
+
+<header>DimeX (DX)</header>
+
+<button onclick="connectWallet()">CONNECT WALLET</button>
+<div id="wallet" style="color:gold;margin-top:10px;"></div>
+
+<div id="dash" style="display:none;">
+<div class="card">
+<h3>Stake</h3>
+<button>Stake DX</button>
+</div>
+</div>
+
 <script>
-
-let provider;
-let signer;
-let userAddress;
-
-// ====== CONTRACT DETAILS ======
-const stakingAddress = "YOUR_STAKING_CONTRACT";
-const tokenAddress   = "YOUR_TOKEN_CONTRACT";
-
-// ABI minimal
-const stakingABI = [
-"function stake(uint256 amount) public",
-"function getStake(address user) view returns(uint256)",
-"function claim() public"
-];
-
-constnconst tokenABI = [
-"function approve(address spender,uint256 amount) public returns(bool)",
-"function balanceOf(address account) view returns(uint256)"
-];
-
-// ==============================
-
 async function connectWallet(){
 
 if(window.ethereum){
 
-provider = new ethers.providers.Web3Provider(window.ethereum);
-await provider.send("eth_requestAccounts", []);
-signer = provider.getSigner();
-userAddress = await signer.getAddress();
+const accounts = await window.ethereum.request({
+method: "eth_requestAccounts"
+});
 
 document.getElementById("wallet").innerHTML =
-"Connected: " + userAddress;
+"Connected: " + accounts[0];
 
 document.getElementById("dash").style.display="block";
-
-loadBalance();
 
 }else{
 
@@ -47,58 +73,7 @@ window.location.href =
 }
 
 }
-
-// ==============================
-// LOAD TOKEN BALANCE
-// ==============================
-async function loadBalance(){
-
-const token = new ethers.Contract(tokenAddress, tokenABI, provider);
-let bal = await token.balanceOf(userAddress);
-
-bal = ethers.utils.formatUnits(bal,18);
-
-document.getElementById("balance").innerHTML =
-"DX Balance: " + bal;
-
-}
-
-// ==============================
-// STAKE FUNCTION
-// ==============================
-async function stakeDX(){
-
-const amount = prompt("Enter DX amount to stake:");
-
-const token = new ethers.Contract(tokenAddress, tokenABI, signer);
-const staking = new ethers.Contract(stakingAddress, stakingABI, signer);
-
-const wei = ethers.utils.parseUnits(amount,18);
-
-// approve
-let tx1 = await token.approve(stakingAddress, wei);
-await tx1.wait();
-
-// stake
-let tx2 = await staking.stake(wei);
-await tx2.wait();
-
-alert("Staked Successfully");
-
-}
-
-// ==============================
-// CLAIM REWARD
-// ==============================
-async function claimReward(){
-
-const staking = new ethers.Contract(stakingAddress, stakingABI, signer);
-
-let tx = await staking.claim();
-await tx.wait();
-
-alert("Reward Claimed");
-
-}
-
 </script>
+
+</body>
+</html>
