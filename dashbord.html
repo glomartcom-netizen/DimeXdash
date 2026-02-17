@@ -1,93 +1,156 @@
-<!DOCTYPE html><html>  <head>  
-<meta charset="UTF-8">  
-<meta name="viewport" content="width=device-width, initial-scale=1.0">  
-<title>DimeX Dashboard</title><script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script><script src="https://unpkg.com/@walletconnect/ethereum-provider@2.11.0/dist/index.umd.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"><style>  
-body{margin:0;background:#000;color:#fff;font-family:Arial}  
-.header-row{display:flex;justify-content:center;align-items:center;gap:10px;padding:20px}  
-.logo{width:60px;height:60px}  
-.title{font-size:24px;font-weight:bold;color:gold}  
-.btn{background:gold;border:none;padding:14px;border-radius:10px;font-weight:bold;font-size:15px;cursor:pointer;width:260px;margin-top:12px}  
-.card{background:#111;padding:18px;border-radius:14px;margin:14px auto;width:92%;text-align:center}  
-.statGrid{display:grid;grid-template-columns:1fr;gap:12px;width:92%;margin:auto}  
-.statBox{background:#111;padding:14px;border-radius:12px}  
-.statValue{color:gold;font-weight:bold;font-size:18px;margin-top:6px}  
-input{padding:14px;width:90%;margin:12px;background:#000;color:#fff;border:1px solid #333;border-radius:8px;font-size:16px}  
-@media(min-width:768px){  
-.statGrid{grid-template-columns:1fr 1fr;width:60%}  
-}  
-</style></head><body><div class="header-row">  
-<img src="https://i.ibb.co/zVB8fHMD/logo.png" class="logo">  
-<div class="title">DimeX Dashboard</div>  
-</div><div style="text-align:center;">  
-<button class="btn" onclick="connect()">CONNECT WALLET</button>  
-</div><div id="wallet" style="text-align:center;color:#aaa"></div>  
-<div id="status" style="text-align:center;color:gold"></div><div class="statGrid">  
-<div class="statBox">Total Stake<div id="totalStake" class="statValue">0</div></div>  
-<div class="statBox">Daily Reward<div id="dailyReward" class="statValue">0</div></div>  
-<div class="statBox">Total Income<div id="totalIncome" class="statValue">0</div></div>  
-<div class="statBox">Direct Income<div id="directIncome" class="statValue">0</div></div>  
-<div class="statBox">Level Income<div id="levelIncome" class="statValue">0</div></div>  
-<div class="statBox">Team Count<div id="teamCount" class="statValue">0</div></div>  
-</div><script>  let provider, signer;
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DimeX Dashboard</title>
 
-// 🔴 CONNECT WALLET
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+<script src="https://unpkg.com/@walletconnect/ethereum-provider@2.11.0/dist/index.umd.js"></script>
+
+<style>
+body{background:#000;color:#fff;font-family:Arial;text-align:center}
+.btn{background:gold;border:none;padding:12px 18px;margin:6px;border-radius:8px;font-weight:bold}
+.card{background:#111;margin:12px auto;padding:14px;border-radius:10px;width:92%;max-width:420px}
+.stat{color:gold;font-size:18px}
+.popup{
+position:fixed;top:0;left:0;width:100%;height:100%;
+background:rgba(0,0,0,0.9);display:none;overflow:auto
+}
+.popupContent{background:#111;margin:40px;padding:20px;border-radius:10px}
+</style>
+</head>
+
+<body>
+
+<h2>DimeX Dashboard</h2>
+
+<button class="btn" onclick="connect()">CONNECT WALLET</button>
+<div id="wallet"></div>
+
+<div class="card">Total Stake<div id="totalStake" class="stat">0</div></div>
+<div class="card">Daily Reward<div id="dailyReward" class="stat">0</div></div>
+<div class="card">Direct Income<div id="directIncome" class="stat">0</div></div>
+<div class="card">Level Income<div id="levelIncome" class="stat">0</div></div>
+<div class="card">Total Income<div id="totalIncome" class="stat">0</div></div>
+<div class="card">Team Count<div id="teamCount" class="stat">0</div></div>
+
+<button class="btn" onclick="openDownline()">VIEW DOWNLINE</button>
+<button class="btn" onclick="openClaims()">CLAIM HISTORY</button>
+<button class="btn" onclick="claim()">CLAIM</button>
+
+<!-- DOWNLINE POPUP -->
+<div id="downlinePopup" class="popup">
+<div class="popupContent">
+<h3>Downline</h3>
+<div id="downlineData"></div>
+<button class="btn" onclick="closeDownline()">CLOSE</button>
+</div>
+</div>
+
+<!-- CLAIM POPUP -->
+<div id="claimPopup" class="popup">
+<div class="popupContent">
+<h3>Claim History</h3>
+<div id="claimData"></div>
+<button class="btn" onclick="closeClaims()">CLOSE</button>
+</div>
+</div>
+
+<script>
+
+let provider, signer, staking;
+
+const STAKING="PASTE_STAKING_ADDRESS";
+
+const ABI=[
+"function userInfo(address) view returns(uint,uint,uint,uint,uint,uint)",
+"function getDownline(address) view returns(address[])",
+"function getClaims(address) view returns(uint[])",
+"function claim()"
+];
+
 async function connect(){
 
-try{
+let p;
 
-document.getElementById("status").innerHTML="Connecting wallet...";
-
-let providerInstance;
-
-// 🟢 METAMASK DESKTOP
 if(window.ethereum){
-providerInstance = new ethers.providers.Web3Provider(window.ethereum);
-await providerInstance.send("eth_requestAccounts", []);
+p=new ethers.providers.Web3Provider(window.ethereum);
+await p.send("eth_requestAccounts",[]);
+}else{
+const wc=await window.EthereumProvider.init({
+projectId:"62a73933d62534edcd2f54b8a06c4319",
+chains:[56],
+showQrModal:true
+});
+await wc.enable();
+p=new ethers.providers.Web3Provider(wc);
 }
 
-// 🔵 MOBILE ALL WALLET
-else{
+provider=p;
+signer=p.getSigner();
+staking=new ethers.Contract(STAKING,ABI,signer);
 
-const EthereumProvider = window.EthereumProvider;
+let addr=await signer.getAddress();
+document.getElementById("wallet").innerHTML=addr;
 
-const wc = await EthereumProvider.init({
-projectId: "62a73933d62534edcd2f54b8a06c4319",
-chains: [56],
-showQrModal: true,
-metadata:{
-name:"DimeX",
-description:"DimeX staking",
-url:window.location.origin,
-icons:["https://i.ibb.co/zVB8fHMD/logo.png"]
+loadData();
+setInterval(loadData,10000); // auto refresh
 }
+
+async function loadData(){
+
+let addr=await signer.getAddress();
+let d=await staking.userInfo(addr);
+
+document.getElementById("totalStake").innerHTML=d[0];
+document.getElementById("dailyReward").innerHTML=d[1];
+document.getElementById("directIncome").innerHTML=d[2];
+document.getElementById("levelIncome").innerHTML=d[3];
+document.getElementById("totalIncome").innerHTML=d[4];
+document.getElementById("teamCount").innerHTML=d[5];
+
+}
+
+async function openDownline(){
+let addr=await signer.getAddress();
+let list=await staking.getDownline(addr);
+
+let html="";
+list.forEach(a=>{
+html+=a+"<br>";
 });
 
-await wc.enable();
-providerInstance = new ethers.providers.Web3Provider(wc);
-
+document.getElementById("downlineData").innerHTML=html;
+document.getElementById("downlinePopup").style.display="block";
 }
 
-provider = providerInstance;
-signer = provider.getSigner();
-
-const net = await provider.getNetwork();
-
-if(net.chainId !== 56){
-alert("Switch to BNB Smart Chain");
-return;
+function closeDownline(){
+document.getElementById("downlinePopup").style.display="none";
 }
 
-let addr = await signer.getAddress();
-document.getElementById("wallet").innerHTML="Wallet: "+addr;
-document.getElementById("status").innerHTML="Wallet Connected";
+async function openClaims(){
+let addr=await signer.getAddress();
+let list=await staking.getClaims(addr);
 
-}catch(e){
-console.log(e);
-alert("Wallet connect failed");
+let html="";
+list.forEach(a=>{
+html+=a+"<br>";
+});
+
+document.getElementById("claimData").innerHTML=html;
+document.getElementById("claimPopup").style.display="block";
 }
 
+function closeClaims(){
+document.getElementById("claimPopup").style.display="none";
 }
 
-</script></body>
+async function claim(){
+await staking.claim();
+}
 
+</script>
+
+</body>
   </html>
