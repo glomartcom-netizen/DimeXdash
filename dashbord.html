@@ -11,22 +11,71 @@
 
 <style>
 body{margin:0;background:#000;color:#fff;font-family:Arial}
-.header{text-align:center;padding:20px 10px}
-.header-row{display:flex;justify-content:center;align-items:center;gap:10px}
-.logo{width:60px;height:60px;border:2px solid gold;border-radius:12px;display:flex;align-items:center;justify-content:center;color:gold;font-size:24px}
-.title{font-size:24px;font-weight:bold;color:gold}
-.btn{background:gold;border:none;padding:16px;border-radius:10px;font-weight:bold;font-size:16px;cursor:pointer;width:90%;margin-top:12px}
-.btn:disabled{opacity:.5}
-.card{background:#111;padding:18px;border-radius:14px;margin:14px auto;width:92%;text-align:center}
-.statGrid{display:grid;grid-template-columns:1fr;gap:12px;width:92%;margin:auto}
-.statBox{background:#111;padding:14px;border-radius:12px}
-.statValue{color:gold;font-weight:bold;font-size:18px;margin-top:6px}
-input{padding:14px;width:90%;margin:12px;background:#000;color:#fff;border:1px solid #333;border-radius:8px;font-size:16px}
-i{color:gold;margin-right:6px}
+
+.header-row{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:12px;
+padding:20px;
+}
+
+.logo{
+width:60px;
+height:60px;
+}
+
+.title{
+font-size:24px;
+font-weight:bold;
+color:gold;
+}
+
+.btn{
+background:gold;
+border:none;
+padding:12px 22px;
+border-radius:10px;
+font-weight:bold;
+font-size:15px;
+cursor:pointer;
+width:240px;
+margin-top:12px;
+}
+
+.card{
+background:#111;
+padding:18px;
+border-radius:14px;
+margin:14px auto;
+width:92%;
+text-align:center;
+}
+
+.statGrid{
+display:grid;
+grid-template-columns:1fr;
+gap:12px;
+width:92%;
+margin:auto;
+}
+
+.statBox{
+background:#111;
+padding:14px;
+border-radius:12px;
+}
+
+.statValue{
+color:gold;
+font-weight:bold;
+font-size:18px;
+margin-top:6px;
+}
+
 @media(min-width:768px){
 .statGrid{grid-template-columns:1fr 1fr;width:60%}
-.card{width:420px}
-.btn{width:300px}
+.btn{width:260px}
 }
 </style>
 </head>
@@ -34,126 +83,57 @@ i{color:gold;margin-right:6px}
 <body>
 
 <div class="header-row">
-<div class="logo">
-<img src="https://i.ibb.co/zVB8fHMD/logo.png" style="width:90px;object-fit:contain;margin-top:20px;">
-</div>
+<img src="https://i.ibb.co/zVB8fHMD/logo.png" class="logo">
 <div class="title">DimeX Dashboard</div>
 </div>
 
 <div style="text-align:center;">
-<button class="btn" onclick="connect()">Connect Wallet</button>
+<button class="btn" onclick="connect()">CONNECT WALLET</button>
 </div>
 
-<div id="wallet" style="text-align:center;color:#aaa"></div>
-<div id="status" style="text-align:center;color:gold"></div>
-
-<!-- REST SAME UI -->
-<!-- (I am not touching anything below) -->
+<div id="wallet" style="text-align:center;color:#aaa;margin-top:10px;"></div>
+<div id="status" style="text-align:center;color:gold;margin-bottom:10px;"></div>
 
 <div class="statGrid">
-<div class="statBox"><i class="fa-solid fa-coins"></i> Total Stake
-<div id="totalStake" class="statValue">0</div></div>
-
-<div class="statBox"><i class="fa-solid fa-bolt"></i> Daily Reward
-<div id="dailyReward" class="statValue">0</div></div>
-
-<div class="statBox"><i class="fa-solid fa-chart-line"></i> Total Income
-<div id="totalIncome" class="statValue">0</div></div>
-
-<div class="statBox"><i class="fa-solid fa-user-plus"></i> Direct Income
-<div id="directIncome" class="statValue">0</div></div>
-
-<div class="statBox"><i class="fa-solid fa-sitemap"></i> Level Income
-<div id="levelIncome" class="statValue">0</div></div>
-
-<div class="statBox"><i class="fa-solid fa-users"></i> Team Count
-<div id="teamCount" class="statValue">0</div></div>
-</div>
-
-<div class="card">
-<h3><i class="fa-solid fa-link"></i> Referral Link</h3>
-<input id="refInput" readonly>
-<button class="btn" onclick="copyRef()"><i class="fa-solid fa-copy"></i> COPY</button>
-</div>
-
-<div class="card">
-<button class="btn" onclick="toggleStake()"><i class="fa-solid fa-lock"></i> STAKE</button>
-</div>
-
-<div id="stakeBox" style="display:none">
-
-<div class="card">
-<h3>USDT (BEP20)</h3>
-<input id="usdtAmount" placeholder="Amount">
-<button class="btn" onclick="approveUSDT()">Approve</button>
-<button class="btn" onclick="stakeUSDT()">Stake</button>
-</div>
-
-<div class="card">
-<h3>DX</h3>
-<input id="dxAmount" placeholder="Amount">
-<button class="btn" onclick="approveDX()">Approve</button>
-<button class="btn" onclick="stakeDX()">Stake</button>
-</div>
-
-</div>
-
-<div class="card">
-<h3><i class="fa-solid fa-gift"></i> Claimable</h3>
-<div id="claimAmount" style="color:gold;font-size:22px">0</div>
-<button id="claimBtn" class="btn" onclick="claim()" disabled>CLAIM</button>
+<div class="statBox">Total Stake<div id="totalStake" class="statValue">0</div></div>
+<div class="statBox">Daily Reward<div id="dailyReward" class="statValue">0</div></div>
+<div class="statBox">Total Income<div id="totalIncome" class="statValue">0</div></div>
+<div class="statBox">Direct Income<div id="directIncome" class="statValue">0</div></div>
+<div class="statBox">Level Income<div id="levelIncome" class="statValue">0</div></div>
+<div class="statBox">Team Count<div id="teamCount" class="statValue">0</div></div>
 </div>
 
 <script>
 
-let provider, signer, staking, usdt, dx;
+let provider, signer;
 
-const STAKING_ADDRESS="PASTE_STAKING_ADDRESS";
-const DX_TOKEN="PASTE_DX_TOKEN_ADDRESS";
-const USDT="0x55d398326f99059fF775485246999027B3197955";
-
-const ABI=[
-"function stakeUSDT(uint amount,address ref)",
-"function stakeDX(uint amount,address ref)",
-"function claim()",
-"function userInfo(address) view returns(uint,uint,uint,uint,uint,uint)"
-];
-
-const ERC20=["function approve(address spender,uint amount) returns(bool)"];
-
-function setStatus(t){document.getElementById("status").innerHTML=t}
-
-function toggleStake(){
-let b=document.getElementById("stakeBox");
-b.style.display=b.style.display=="none"?"block":"none";
-}
-
+// CONNECT WALLET
 async function connect(){
 
 try{
 
-setStatus("Connecting wallet...");
+document.getElementById("status").innerHTML="Connecting wallet...";
 
 let providerInstance;
 
-// Desktop MetaMask
+// DESKTOP METAMASK
 if(window.ethereum){
 providerInstance = new ethers.providers.Web3Provider(window.ethereum);
 await providerInstance.send("eth_requestAccounts", []);
 }
 
-// Chrome mobile / other wallets
+// MOBILE WALLETCONNECT
 else{
 
 const wc = await window.EthereumProvider.init({
 projectId: "62a73933d62534edcd2f54b8a06c4319",
 chains: [56],
 showQrModal: true,
-metadata: {
-name: "DimeX",
-description: "DimeX Staking",
-url: window.location.origin,
-icons: ["https://i.ibb.co/zVB8fHMD/logo.png"]
+metadata:{
+name:"DimeX",
+description:"DimeX staking",
+url:window.location.origin,
+icons:["https://i.ibb.co/zVB8fHMD/logo.png"]
 }
 });
 
@@ -165,38 +145,23 @@ provider = providerInstance;
 signer = provider.getSigner();
 
 const net = await provider.getNetwork();
+
 if(net.chainId !== 56){
-alert("Please switch wallet to BSC network");
+alert("Switch wallet to BNB Smart Chain");
 return;
 }
 
-// contracts
-staking = new ethers.Contract(STAKING_ADDRESS, ABI, signer);
-usdt = new ethers.Contract(USDT, ERC20, signer);
-dx = new ethers.Contract(DX_TOKEN, ERC20, signer);
-
-// wallet address
 let addr = await signer.getAddress();
-document.getElementById("wallet").innerHTML = "Wallet: " + addr;
-
-// referral
-document.getElementById("refInput").value =
-window.location.origin + "?ref=" + addr;
-
-setStatus("Wallet connected");
-
-// load dashboard
-loadData();
-setInterval(loadData,10000);
+document.getElementById("wallet").innerHTML="Wallet: "+addr;
+document.getElementById("status").innerHTML="Wallet Connected";
 
 }catch(e){
 console.log(e);
-alert("Wallet connection failed");
+alert("Wallet connect failed");
 }
 
 }
-
 </script>
 
 </body>
-  </html>
+                                                                              </html>
