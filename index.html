@@ -267,25 +267,10 @@ if(addr.toLowerCase()==ADMIN.toLowerCase()){
 document.getElementById("adminPanel").style.display="block";
 }
 
-loadDemo();
-
 }catch(e){
 alert("Wallet connect failed");
 console.log(e);
 }
-}
-
-// DEMO DATA
-function loadDemo(){
-setInterval(()=>{
-document.getElementById("totalStake").innerHTML=Math.floor(Math.random()*1000);
-document.getElementById("dailyReward").innerHTML=Math.floor(Math.random()*50);
-document.getElementById("directIncome").innerHTML=Math.floor(Math.random()*200);
-document.getElementById("levelIncome").innerHTML=Math.floor(Math.random()*150);
-document.getElementById("totalIncome").innerHTML=Math.floor(Math.random()*500);
-document.getElementById("teamCount").innerHTML=Math.floor(Math.random()*20);
-document.getElementById("claimAmount").innerHTML=Math.floor(Math.random()*80);
-},4000);
 }
 
 // APPROVE + STAKE
