@@ -1,8 +1,15 @@
-<!DOCTYPE html><html>
+<!DOCTYPE html>
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DimeX Dashboard</title><script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script><script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"><style>
+<title>DimeX Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+<script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
 body{margin:0;background:#000;color:#fff;font-family:Arial;text-align:center}
 .header{padding:25px}
 .logo{width:80px;margin:auto}
@@ -57,71 +64,147 @@ width:90%;max-width:420px;border:1px solid #222;
 margin-top:40px;padding:25px;border-top:1px solid #222;
 color:#777
 }
-</style></head><body><div class="header">
+</style>
+</head>
+
+<body>
+
+<div class="header">
 <img src="https://i.ibb.co/zVB8fHMD/logo.png" class="logo">
 <div class="title">DimeX Dashboard</div>
-</div><button class="btn" onclick="connectWallet()">
+</div>
+
+<button class="btn" onclick="connectWallet()">
 <i class="fa-solid fa-wallet"></i> Connect Wallet
-</button><div id="wallet"></div>
-<div id="status" style="color:gold"></div><!-- INCOME --><div class="grid"><div class="box"><i class="fa-solid fa-coins"></i>
+</button>
+
+<div id="wallet"></div>
+<div id="status" style="color:gold"></div>
+
+<!-- INCOME -->
+<div class="grid">
+
+<div class="box"><i class="fa-solid fa-coins"></i>
 <div>Total Stake</div>
-<div id="totalStake" class="value">0</div></div><div class="box"><i class="fa-solid fa-bolt"></i>
+<div id="totalStake" class="value">0</div></div>
+
+<div class="box"><i class="fa-solid fa-bolt"></i>
 <div>Daily Reward</div>
-<div id="dailyReward" class="value">0</div></div><div class="box"><i class="fa-solid fa-chart-line"></i>
+<div id="dailyReward" class="value">0</div></div>
+
+<div class="box"><i class="fa-solid fa-chart-line"></i>
 <div>Total Income</div>
-<div id="totalIncome" class="value">0</div></div><div class="box"><i class="fa-solid fa-user-plus"></i>
+<div id="totalIncome" class="value">0</div></div>
+
+<div class="box"><i class="fa-solid fa-user-plus"></i>
 <div>Direct Income</div>
-<div id="directIncome" class="value">0</div></div><div class="box"><i class="fa-solid fa-sitemap"></i>
+<div id="directIncome" class="value">0</div></div>
+
+<div class="box"><i class="fa-solid fa-sitemap"></i>
 <div>Level Income</div>
-<div id="levelIncome" class="value">0</div></div><div class="box"><i class="fa-solid fa-users"></i>
+<div id="levelIncome" class="value">0</div></div>
+
+<div class="box"><i class="fa-solid fa-users"></i>
 <div>Team Count</div>
-<div id="teamCount" class="value">0</div></div></div><!-- STAKE --><button class="btn" onclick="toggleStake()">
+<div id="teamCount" class="value">0</div></div>
+
+</div>
+
+<!-- STAKE -->
+<button class="btn" onclick="toggleStake()">
 <i class="fa-solid fa-lock"></i> Stake
-</button><div id="stakeBox" style="display:none"><div class="card">
+</button>
+
+<div id="stakeBox" style="display:none">
+
+<div class="card">
 <h3>USDT Stake</h3>
 <input id="usdtAmount" placeholder="Amount">
 <button class="btn" onclick="approveUSDT()">Approve</button>
 <button class="btn" onclick="stakeUSDT()">Stake</button>
-</div><div class="card">
+</div>
+
+<div class="card">
 <h3>DMX Stake</h3>
 <input id="dxAmount" placeholder="Amount">
 <button class="btn" onclick="approveDX()">Approve</button>
 <button class="btn" onclick="stakeDX()">Stake</button>
-</div></div><!-- CLAIM --><div class="card">
+</div>
+
+</div>
+
+<!-- CLAIM -->
+<div class="card">
 <h3><i class="fa-solid fa-gift"></i> Claim</h3>
 <div id="claimAmount" class="value">0</div>
 <button class="btn" onclick="claim()">Claim</button>
-</div><!-- REF --><div class="card">
+</div>
+
+<!-- REF -->
+<div class="card">
 <h3><i class="fa-solid fa-link"></i> Referral Link</h3>
 <input id="refInput" readonly>
 <button class="btn" onclick="copyRef()">Copy</button>
-</div><button class="btn" onclick="openDownline()">View Downline</button>
-<button class="btn" onclick="openHistory()">Claim History</button>
+</div>
 
-<!-- ADMIN --><div id="adminPanel" style="display:none">
+<button class="btn" onclick="openDownline()">
+<i class="fa-solid fa-sitemap"></i> View Downline
+</button>
+
+<button class="btn" onclick="openHistory()">
+<i class="fa-solid fa-clock"></i> Claim History
+</button>
+
+<!-- ADMIN -->
+<div id="adminPanel" style="display:none">
 <div class="card">
 <h3><i class="fa-solid fa-user-shield"></i> Admin Panel</h3>
 <button class="btn">Total Users</button>
 <button class="btn">Total Staked</button>
 <button class="btn">Reward Pool</button>
 </div>
-</div><!-- POPUPS --><div class="popup" id="downlinePopup">
+</div>
+
+<!-- POPUPS -->
+<div class="popup" id="downlinePopup">
 <div class="popupBox">
 <h3>20 Level Downline</h3>
 <div id="downlineData"></div>
 <button class="btn" onclick="closePopup()">Close</button>
 </div>
-</div><div class="popup" id="historyPopup">
+</div>
+
+<div class="popup" id="historyPopup">
 <div class="popupBox">
 <h3>Claim History</h3>
 <div>No history yet</div>
 <button class="btn" onclick="closePopup()">Close</button>
 </div>
-</div><div class="footer">DimeX © 2026</div><script>
+</div>
+
+<div class="footer">DimeX © 2026</div>
+
+<script>
 
 let provider;
 const ADMIN="0x53ba2d865be750d0e2d4d01bcb0a46ec1684c46b";
 
+// TOKEN ADDRESS (CHANGE LATER)
+const USDT="0x55d398326f99059fF775485246999027B3197955";
+const DMX="PUT_DMX_TOKEN";
+const STAKING_ADDRESS="PUT_STAKING_CONTRACT";
+
+// ABI
+const ERC20_ABI=[
+"function approve(address spender,uint256 amount) public returns(bool)"
+];
+
+const STAKE_ABI=[
+"function stakeUSDT(uint256 amount) public",
+"function stakeDMX(uint256 amount) public"
+];
+
+// UI
 function toggleStake(){
 let b=document.getElementById("stakeBox");
 b.style.display=b.style.display=="none"?"block":"none";
@@ -151,28 +234,29 @@ document.getElementById("downlinePopup").style.display="none";
 document.getElementById("historyPopup").style.display="none";
 }
 
+// WALLET
 async function connectWallet(){
 
 try{
 
 if(window.ethereum){
-provider = new ethers.providers.Web3Provider(window.ethereum);
+provider=new ethers.providers.Web3Provider(window.ethereum);
 await provider.send("eth_requestAccounts",[]);
 }else{
-const walletConnectProvider = new WalletConnectProvider.default({
+const wc=new WalletConnectProvider.default({
 rpc:{56:"https://bsc-dataseed.binance.org/"}
 });
-await walletConnectProvider.enable();
-provider = new ethers.providers.Web3Provider(walletConnectProvider);
+await wc.enable();
+provider=new ethers.providers.Web3Provider(wc);
 }
 
-const signer = provider.getSigner();
-const addr = await signer.getAddress();
+const signer=provider.getSigner();
+const addr=await signer.getAddress();
 
 document.getElementById("wallet").innerHTML="Wallet: "+addr;
 document.getElementById("status").innerHTML="Connected";
 
-document.getElementById("refInput").value =
+document.getElementById("refInput").value=
 window.location.origin+"?ref="+addr;
 
 if(addr.toLowerCase()==ADMIN.toLowerCase()){
@@ -185,9 +269,9 @@ loadDemo();
 alert("Wallet connect failed");
 console.log(e);
 }
-
 }
 
+// DEMO DATA
 function loadDemo(){
 setInterval(()=>{
 document.getElementById("totalStake").innerHTML=Math.floor(Math.random()*1000);
@@ -200,143 +284,54 @@ document.getElementById("claimAmount").innerHTML=Math.floor(Math.random()*80);
 },4000);
 }
 
-// demo buttons (real contract later)
-function approveUSDT(){alert("Approve clicked")}
-function stakeUSDT(){alert("Stake clicked")}
-function approveDX(){alert("Approve clicked")}
-function stakeDX(){alert("Stake clicked")}
-function claim(){alert("Claim clicked")}
-// ===== TOKEN ADDRESS =====
-const USDT = "0x55d398326f99059fF775485246999027B3197955"; // BSC USDT
-const DMX  = "PUT_DMX_TOKEN"; // later change
-const STAKING_ADDRESS = "PUT_STAKING_CONTRACT"; // later change
-
-// ===== ABI =====
-const ERC20_ABI = [
-"function approve(address spender,uint256 amount) public returns(bool)"
-];
-
-const STAKE_ABI = [
-"function stakeUSDT(uint256 amount) public",
-"function stakeDMX(uint256 amount) public"
-];
-
-// =======================
-// 🔵 APPROVE USDT
-// =======================
+// APPROVE + STAKE
 async function approveUSDT(){
-
-try{
-
-const signer = provider.getSigner();
-const usdt = new ethers.Contract(USDT, ERC20_ABI, signer);
-
-let amount = document.getElementById("usdtAmount").value;
-if(!amount) return alert("Enter amount");
-
-const tx = await usdt.approve(
-STAKING_ADDRESS,
-ethers.utils.parseUnits(amount,18)
-);
-
+const signer=provider.getSigner();
+const token=new ethers.Contract(USDT,ERC20_ABI,signer);
+let amt=document.getElementById("usdtAmount").value;
+if(!amt)return alert("Enter amount");
+const tx=await token.approve(STAKING_ADDRESS,ethers.utils.parseUnits(amt,18));
 document.getElementById("status").innerHTML="Approving...";
 await tx.wait();
-
 document.getElementById("status").innerHTML="USDT Approved";
-
-}catch(e){
-alert("Approve failed");
-console.log(e);
 }
 
-}
-
-// =======================
-// 🔵 STAKE USDT
-// =======================
 async function stakeUSDT(){
-
-try{
-
-const signer = provider.getSigner();
-const stake = new ethers.Contract(STAKING_ADDRESS, STAKE_ABI, signer);
-
-let amount = document.getElementById("usdtAmount").value;
-if(!amount) return alert("Enter amount");
-
-const tx = await stake.stakeUSDT(
-ethers.utils.parseUnits(amount,18)
-);
-
+const signer=provider.getSigner();
+const stake=new ethers.Contract(STAKING_ADDRESS,STAKE_ABI,signer);
+let amt=document.getElementById("usdtAmount").value;
+if(!amt)return alert("Enter amount");
+const tx=await stake.stakeUSDT(ethers.utils.parseUnits(amt,18));
 document.getElementById("status").innerHTML="Staking...";
 await tx.wait();
-
 document.getElementById("status").innerHTML="USDT Staked";
-
-}catch(e){
-alert("Stake failed");
-console.log(e);
 }
 
-}
-
-// =======================
-// 🔵 APPROVE DMX
-// =======================
 async function approveDX(){
-
-try{
-
-const signer = provider.getSigner();
-const token = new ethers.Contract(DMX, ERC20_ABI, signer);
-
-let amount = document.getElementById("dxAmount").value;
-if(!amount) return alert("Enter amount");
-
-const tx = await token.approve(
-STAKING_ADDRESS,
-ethers.utils.parseUnits(amount,18)
-);
-
-document.getElementById("status").innerHTML="Approving...";
+const signer=provider.getSigner();
+const token=new ethers.Contract(DMX,ERC20_ABI,signer);
+let amt=document.getElementById("dxAmount").value;
+if(!amt)return alert("Enter amount");
+const tx=await token.approve(STAKING_ADDRESS,ethers.utils.parseUnits(amt,18));
 await tx.wait();
-
-document.getElementById("status").innerHTML="DMX Approved";
-
-}catch(e){
-alert("Approve failed");
+alert("DMX Approved");
 }
 
-}
-
-// =======================
-// 🔵 STAKE DMX
-// =======================
 async function stakeDX(){
-
-try{
-
-const signer = provider.getSigner();
-const stake = new ethers.Contract(STAKING_ADDRESS, STAKE_ABI, signer);
-
-let amount = document.getElementById("dxAmount").value;
-if(!amount) return alert("Enter amount");
-
-const tx = await stake.stakeDMX(
-ethers.utils.parseUnits(amount,18)
-);
-
-document.getElementById("status").innerHTML="Staking...";
+const signer=provider.getSigner();
+const stake=new ethers.Contract(STAKING_ADDRESS,STAKE_ABI,signer);
+let amt=document.getElementById("dxAmount").value;
+if(!amt)return alert("Enter amount");
+const tx=await stake.stakeDMX(ethers.utils.parseUnits(amt,18));
 await tx.wait();
-
-document.getElementById("status").innerHTML="DMX Staked";
-
-}catch(e){
-alert("Stake failed");
+alert("DMX Staked");
 }
 
+function claim(){
+alert("Claim working (contract later)");
 }
 
-  
-</script></body>
+</script>
+
+</body>
 </html>
