@@ -249,7 +249,11 @@ rpc:{56:"https://bsc-dataseed.binance.org/"}
 await wc.enable();
 provider=new ethers.providers.Web3Provider(wc);
 }
-
+const network = await provider.getNetwork();
+if(network.chainId !== 56){
+alert("Switch to BSC Mainnet");
+return;
+} 
 const signer=provider.getSigner();
 const addr=await signer.getAddress();
 
